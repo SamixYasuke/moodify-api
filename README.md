@@ -1,323 +1,521 @@
-REST API Endpoints Specification
+# API Documentation
 
-1. Authentication APIs
-   Sign-Up
-   POST /api/auth/signup/email
+---
 
-Description: Register a new user with email and password.
-Request Body:{
-"username": "string",
-"email": "string",
-"password": "string" // min 8 characters
-}
+## 1. Authentication APIs
 
-Response:{
-"userId": "string",
-"username": "string",
-"email": "string",
-"token": "string" // JWT token
-}
+### Sign-Up
 
-POST /api/auth/signup/google
+#### `POST /api/auth/signup/email`
 
-Description: Register or log in a user via Google OAuth.
-Request Body:{
-"googleToken": "string" // Google ID token
-}
+**Description:** Register a new user with email and password.
 
-Response:{
-"userId": "string",
-"username": "string",
-"email": "string",
-"token": "string"
-}
+**Request Body:**
 
-POST /api/auth/signup/apple
-
-Description: Register or log in a user via Apple OAuth.
-Request Body:{
-"appleToken": "string" // Apple ID token
-}
-
-Response:{
-"userId": "string",
-"username": "string",
-"email": "string",
-"token": "string"
-}
-
-Sign-In
-POST /api/auth/signin/email
-
-Description: Authenticate a user with username and password.
-Request Body:{
-"username": "string",
-"password": "string"
-}
-
-Response:{
-"userId": "string",
-"username": "string",
-"email": "string",
-"token": "string"
-}
-
-POST /api/auth/signin/google
-
-Description: Authenticate a user via Google OAuth.
-Request Body:{
-"googleToken": "string"
-}
-
-Response:{
-"userId": "string",
-"username": "string",
-"email": "string",
-"token": "string"
-}
-
-POST /api/auth/signin/apple
-
-Description: Authenticate a user via Apple OAuth.
-Request Body:{
-"appleToken": "string"
-}
-
-Response:{
-"userId": "string",
-"username": "string",
-"email": "string",
-"token": "string"
-}
-
-2. Mood Selection APIs
-   POST /api/moods
-
-Description: Set the user's current mood.
-Request Body:{
-"mood": "string" // "Energized", "Neutral", "Tired"
-}
-
-Response:{
-"userId": "string",
-"mood": "string",
-"updatedAt": "string" // ISO 8601 timestamp
-}
-
-3. Dashboard APIs
-   User Info
-   GET /api/dashboard/user
-
-Description: Retrieve the authenticated user's information.
-Response:{
-"userId": "string",
-"username": "string",
-"email": "string"
-}
-
-Add Task
-POST /api/dashboard/tasks
-
-Description: Create a new task for the authenticated user.
-Request Body:{
-"name": "string",
-"time": "string", // e.g., "13:00"
-"date": "string", // e.g., "2025-04-16"
-"priority": "string", // "High", "Medium", "Low"
-"mood": "string", // "Energized", "Neutral", "Tired"
-"image": "string" // "img1", "img2", "img3", "img4"
-}
-
-Response:{
-"taskId": "string",
-"name": "string",
-"time": "string",
-"date": "string",
-"priority": "string",
-"mood": "string",
-"image": "string",
-"createdAt": "string"
-}
-
-Get Tasks
-GET /api/dashboard/tasks
-
-Description: Retrieve all tasks for the authenticated user.
-Response:[
+```json
 {
-"taskId": "string",
-"name": "string",
-"time": "string",
-"image": "string"
+  "username": "string",
+  "email": "string",
+  "password": "string" // min 8 characters
 }
-]
+```
 
-Filter Tasks
-GET /api/dashboard/tasks/filter
+**Response:**
 
-Description: Retrieve tasks filtered by mood.
-Query Parameters:
-mood: "Energized" | "Neutral" | "Tired"
-
-Response:[
+```json
 {
-"taskId": "string",
-"name": "string",
-"time": "string",
-"image": "string"
+  "userId": "string",
+  "username": "string",
+  "email": "string",
+  "token": "string" // JWT token
 }
-]
+```
 
-Get Task Details
-GET /api/dashboard/tasks/:taskId
+#### `POST /api/auth/signup/google`
 
-Description: Retrieve detailed information for a specific task.
-Path Parameters:
-taskId: Task identifier
+**Description:** Register or log in a user via Google OAuth.
 
-Response:{
-"taskId": "string",
-"name": "string",
-"due": "string", // Combined date and time, e.g., "2025-04-16T13:00:00Z"
-"mood": "string",
-"progress": "number" // e.g., 0 to 100
-}
+**Request Body:**
 
-Edit Task
-PATCH /api/dashboard/tasks/:taskId
-
-Description: Update an existing task.
-Path Parameters:
-taskId: Task identifier
-
-Request Body:{
-"name": "string",
-"time": "string",
-"date": "string",
-"priority": "string",
-"image": "string"
-}
-
-Response:{
-"taskId": "string",
-"name": "string",
-"time": "string",
-"date": "string",
-"priority": "string",
-"image": "string",
-"updatedAt": "string"
-}
-
-Delete Task
-DELETE /api/dashboard/tasks/:taskId
-
-Description: Delete a specific task.
-Path Parameters:
-taskId: Task identifier
-
-Response:{
-"message": "Task deleted successfully"
-}
-
-4. Notifications APIs
-   GET /api/notifications
-
-Description: Retrieve upcoming task notifications and periodic mood check prompts.
-Response:[
+```json
 {
-"notificationId": "string",
-"type": "string", // "task" or "mood"
-"message": "string", // e.g., "Task 'Meeting' is due at 13:00" or "How are you feeling?"
-"createdAt": "string"
+  "googleToken": "string" // Google ID token
 }
-]
+```
 
-5. Calendar APIs
-   GET /api/calendar
+**Response:**
 
-Description: Retrieve tasks for a specific day.
-Query Parameters:
-date: Date in format "YYYY-MM-DD" (e.g., "2025-04-16")
-
-Response:[
+```json
 {
-"taskId": "string",
-"name": "string",
-"time": "string",
-"mood": "string",
-"image": "string"
+  "userId": "string",
+  "username": "string",
+  "email": "string",
+  "token": "string"
 }
+```
+
+#### `POST /api/auth/signup/apple`
+
+**Description:** Register or log in a user via Apple OAuth.
+
+**Request Body:**
+
+```json
+{
+  "appleToken": "string" // Apple ID token
+}
+```
+
+**Response:**
+
+```json
+{
+  "userId": "string",
+  "username": "string",
+  "email": "string",
+  "token": "string"
+}
+```
+
+### Sign-In
+
+#### `POST /api/auth/signin/email`
+
+**Description:** Authenticate a user with username and password.
+
+**Request Body:**
+
+```json
+{
+  "username": "string",
+  "password": "string"
+}
+```
+
+**Response:**
+
+```json
+{
+  "userId": "string",
+  "username": "string",
+  "email": "string",
+  "token": "string"
+}
+```
+
+#### `POST /api/auth/signin/google`
+
+**Description:** Authenticate a user via Google OAuth.
+
+**Request Body:**
+
+```json
+{
+  "googleToken": "string"
+}
+```
+
+**Response:**
+
+```json
+{
+  "userId": "string",
+  "username": "string",
+  "email": "string",
+  "token": "string"
+}
+```
+
+#### `POST /api/auth/signin/apple`
+
+**Description:** Authenticate a user via Apple OAuth.
+
+**Request Body:**
+
+```json
+{
+  "appleToken": "string"
+}
+```
+
+**Response:**
+
+```json
+{
+  "userId": "string",
+  "username": "string",
+  "email": "string",
+  "token": "string"
+}
+```
+
+---
+
+## 2. Mood Selection APIs
+
+### `POST /api/moods`
+
+**Description:** Set the user's current mood.
+
+**Request Body:**
+
+```json
+{
+  "mood": "string" // "Energized", "Neutral", "Tired"
+}
+```
+
+**Response:**
+
+```json
+{
+  "userId": "string",
+  "mood": "string",
+  "updatedAt": "string" // ISO 8601 timestamp
+}
+```
+
+---
+
+## 3. Dashboard APIs
+
+### User Info
+
+#### `GET /api/dashboard/user`
+
+**Description:** Retrieve the authenticated user's information.
+
+**Response:**
+
+```json
+{
+  "userId": "string",
+  "username": "string",
+  "email": "string"
+}
+```
+
+### Add Task
+
+#### `POST /api/dashboard/tasks`
+
+**Description:** Create a new task for the authenticated user.
+
+**Request Body:**
+
+```json
+{
+  "name": "string",
+  "time": "string", // e.g., "13:00"
+  "date": "string", // e.g., "2025-04-16"
+  "priority": "string", // "High", "Medium", "Low"
+  "mood": "string", // "Energized", "Neutral", "Tired"
+  "image": "string" // "img1", "img2", "img3", "img4"
+}
+```
+
+**Response:**
+
+```json
+{
+  "taskId": "string",
+  "name": "string",
+  "time": "string",
+  "date": "string",
+  "priority": "string",
+  "mood": "string",
+  "image": "string",
+  "createdAt": "string"
+}
+```
+
+### Get Tasks
+
+#### `GET /api/dashboard/tasks`
+
+**Description:** Retrieve all tasks for the authenticated user.
+
+**Response:**
+
+```json
+[
+  {
+    "taskId": "string",
+    "name": "string",
+    "time": "string",
+    "image": "string"
+  }
 ]
+```
 
-6. Settings APIs
-   PATCH /api/settings/profile/image
+### Filter Tasks
 
-Description: Update the user's profile image.
-Request Body:{
-"image": "string" // URL or identifier for new profile image
+#### `GET /api/dashboard/tasks/filter`
+
+**Description:** Retrieve tasks filtered by mood.
+
+**Query Parameters:**
+
+- `mood`: `"Energized" | "Neutral" | "Tired"`
+
+**Response:**
+
+```json
+[
+  {
+    "taskId": "string",
+    "name": "string",
+    "time": "string",
+    "image": "string"
+  }
+]
+```
+
+### Get Task Details
+
+#### `GET /api/dashboard/tasks/:taskId`
+
+**Description:** Retrieve detailed information for a specific task.
+
+**Path Parameters:**
+
+- `taskId`: Task identifier
+
+**Response:**
+
+```json
+{
+  "taskId": "string",
+  "name": "string",
+  "due": "string", // "2025-04-16T13:00:00Z"
+  "mood": "string",
+  "progress": "number" // e.g., 0 to 100
 }
+```
 
-Response:{
-"userId": "string",
-"image": "string",
-"updatedAt": "string"
+### Edit Task
+
+#### `PATCH /api/dashboard/tasks/:taskId`
+
+**Description:** Update an existing task.
+
+**Path Parameters:**
+
+- `taskId`: Task identifier
+
+**Request Body:**
+
+```json
+{
+  "name": "string",
+  "time": "string",
+  "date": "string",
+  "priority": "string",
+  "image": "string"
 }
+```
 
-PATCH /api/settings/profile/username
+**Response:**
 
-Description: Update the user's username (primary key).
-Request Body:{
-"username": "string"
+```json
+{
+  "taskId": "string",
+  "name": "string",
+  "time": "string",
+  "date": "string",
+  "priority": "string",
+  "image": "string",
+  "updatedAt": "string"
 }
+```
 
-Response:{
-"userId": "string",
-"username": "string",
-"updatedAt": "string"
+### Delete Task
+
+#### `DELETE /api/dashboard/tasks/:taskId`
+
+**Description:** Delete a specific task.
+
+**Path Parameters:**
+
+- `taskId`: Task identifier
+
+**Response:**
+
+```json
+{
+  "message": "Task deleted successfully"
 }
+```
 
-PATCH /api/settings/profile/email
+---
 
-Description: Update the user's email and send a confirmation email.
-Request Body:{
-"email": "string"
+## 4. Notifications APIs
+
+### `GET /api/notifications`
+
+**Description:** Retrieve upcoming task notifications and periodic mood check prompts.
+
+**Response:**
+
+```json
+[
+  {
+    "notificationId": "string",
+    "type": "string", // "task" or "mood"
+    "message": "string",
+    "createdAt": "string"
+  }
+]
+```
+
+---
+
+## 5. Calendar APIs
+
+### `GET /api/calendar`
+
+**Description:** Retrieve tasks for a specific day.
+
+**Query Parameters:**
+
+- `date`: `"YYYY-MM-DD"` (e.g., "2025-04-16")
+
+**Response:**
+
+```json
+[
+  {
+    "taskId": "string",
+    "name": "string",
+    "time": "string",
+    "mood": "string",
+    "image": "string"
+  }
+]
+```
+
+---
+
+## 6. Settings APIs
+
+### Update Profile Image
+
+#### `PATCH /api/settings/profile/image`
+
+**Request Body:**
+
+```json
+{
+  "image": "string" // URL or identifier
 }
+```
 
-Response:{
-"message": "Email updated, confirmation sent"
+**Response:**
+
+```json
+{
+  "userId": "string",
+  "image": "string",
+  "updatedAt": "string"
 }
+```
 
-PATCH /api/settings/theme
+### Update Username
 
-Description: Update the user's color theme preference.
-Request Body:{
-"theme": "string" // "Dark" or "Light"
+#### `PATCH /api/settings/profile/username`
+
+**Request Body:**
+
+```json
+{
+  "username": "string"
 }
+```
 
-Response:{
-"userId": "string",
-"theme": "string",
-"updatedAt": "string"
+**Response:**
+
+```json
+{
+  "userId": "string",
+  "username": "string",
+  "updatedAt": "string"
 }
+```
 
-PATCH /api/settings/reminder
+### Update Email
 
-Description: Update the user's reminder settings.
-Request Body:{
-"reminder": "string", // "5min", "10min", "30min", "1hr", "custom"
-"customTime": "string" // Optional, required if reminder is "custom", e.g., "15min"
+#### `PATCH /api/settings/profile/email`
+
+**Request Body:**
+
+```json
+{
+  "email": "string"
 }
+```
 
-Response:{
-"userId": "string",
-"reminder": "string",
-"customTime": "string | null",
-"updatedAt": "string"
+**Response:**
+
+```json
+{
+  "message": "Email updated, confirmation sent"
 }
+```
 
-PATCH /api/settings/reminder/disable
+### Update Theme
 
-Description: Turn off reminders for the user.
-Response:{
-"message": "Reminders disabled"
+#### `PATCH /api/settings/theme`
+
+**Request Body:**
+
+```json
+{
+  "theme": "string" // "Dark" or "Light"
 }
+```
+
+**Response:**
+
+```json
+{
+  "userId": "string",
+  "theme": "string",
+  "updatedAt": "string"
+}
+```
+
+### Update Reminder Settings
+
+#### `PATCH /api/settings/reminder`
+
+**Request Body:**
+
+```json
+{
+  "reminder": "string", // "5min", "10min", "30min", "1hr", "custom"
+  "customTime": "string" // Optional if reminder is "custom"
+}
+```
+
+**Response:**
+
+```json
+{
+  "userId": "string",
+  "reminder": "string",
+  "customTime": "string | null",
+  "updatedAt": "string"
+}
+```
+
+### Disable Reminders
+
+#### `PATCH /api/settings/reminder/disable`
+
+**Response:**
+
+```json
+{
+  "message": "Reminders disabled"
+}
+```
