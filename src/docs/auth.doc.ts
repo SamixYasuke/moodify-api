@@ -1,5 +1,9 @@
 /**
  * @swagger
+ * tags:
+ *   - name: Authentication
+ *     description: Endpoints related to user authentication
+ *
  * components:
  *   schemas:
  *     UserResponse:
@@ -11,6 +15,7 @@
  *         message:
  *           type: string
  *           example: "Operation successful"
+ *
  *     ErrorResponse:
  *       type: object
  *       properties:
@@ -28,7 +33,7 @@
 
 /**
  * @swagger
- * /auth/register:
+ * /api/auth/register:
  *   post:
  *     summary: Register a new user
  *     tags: [Authentication]
@@ -39,17 +44,21 @@
  *           schema:
  *             type: object
  *             required:
+ *               - username
  *               - email
  *               - password
  *             properties:
+ *               username:
+ *                 type: string
+ *                 example: "newuser"
  *               email:
  *                 type: string
  *                 format: email
- *                 example: "user@example.com"
+ *                 example: "newuser@example.com"
  *               password:
  *                 type: string
  *                 format: password
- *                 example: "StrongP@ssw0rd"
+ *                 example: "SecureP@ssw0rd"
  *     responses:
  *       201:
  *         description: User created successfully
@@ -57,11 +66,8 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/UserResponse'
- *             example:
- *               status_code: 201
- *               message: "User Created Successfully"
  *       400:
- *         description: Bad request
+ *         description: Validation failed or bad request
  *         content:
  *           application/json:
  *             schema:
@@ -73,7 +79,7 @@
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       500:
- *         description: Processing error
+ *         description: Server error
  *         content:
  *           application/json:
  *             schema:
@@ -82,9 +88,9 @@
 
 /**
  * @swagger
- * /auth/login:
+ * /api/auth/login:
  *   post:
- *     summary: Login a user
+ *     summary: Authenticate and log in a user
  *     tags: [Authentication]
  *     requestBody:
  *       required: true
@@ -93,17 +99,16 @@
  *           schema:
  *             type: object
  *             required:
- *               - email
+ *               - username
  *               - password
  *             properties:
- *               email:
+ *               username:
  *                 type: string
- *                 format: email
- *                 example: "user@example.com"
+ *                 example: "newuser"
  *               password:
  *                 type: string
  *                 format: password
- *                 example: "StrongP@ssw0rd"
+ *                 example: "SecureP@ssw0rd"
  *     responses:
  *       200:
  *         description: Login successful
@@ -111,17 +116,14 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/UserResponse'
- *             example:
- *               status_code: 200
- *               message: "Login Successful"
  *       400:
- *         description: Bad request
+ *         description: Validation error or bad request
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
- *         description: Incorrect password
+ *         description: Invalid credentials
  *         content:
  *           application/json:
  *             schema:
@@ -133,7 +135,7 @@
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       500:
- *         description: Processing error
+ *         description: Server error
  *         content:
  *           application/json:
  *             schema:
@@ -142,9 +144,9 @@
 
 /**
  * @swagger
- * /auth/logout:
+ * /api/auth/logout:
  *   post:
- *     summary: Logout a user
+ *     summary: Logs out the current user and clears cookies
  *     tags: [Authentication]
  *     responses:
  *       200:
@@ -153,17 +155,14 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/UserResponse'
- *             example:
- *               status_code: 200
- *               message: "Logout Successful"
  *       400:
- *         description: No active session
+ *         description: No active session found
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       500:
- *         description: Processing error
+ *         description: Server error
  *         content:
  *           application/json:
  *             schema:
@@ -172,20 +171,17 @@
 
 /**
  * @swagger
- * /auth/refresh:
+ * /api/auth/refresh:
  *   post:
- *     summary: Refresh access token
+ *     summary: Refresh the access token using a valid refresh token
  *     tags: [Authentication]
  *     responses:
  *       200:
- *         description: New access token generated
+ *         description: New access token issued
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/UserResponse'
- *             example:
- *               status_code: 200
- *               message: "New Access Token Generated"
  *       401:
  *         description: Invalid or expired refresh token
  *         content:
@@ -193,7 +189,7 @@
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       500:
- *         description: Processing error
+ *         description: Server error
  *         content:
  *           application/json:
  *             schema:

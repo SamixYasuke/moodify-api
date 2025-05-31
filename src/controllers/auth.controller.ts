@@ -4,16 +4,11 @@ import AuthService from "../services/auth.service";
 import { createUserDto, loginUserDto } from "../dtos/user.dto";
 import { CustomError } from "../errors/CustomError";
 import { flattenZodErrors } from "../utils/helper";
-import { AuthenticatedRequest } from "../types/express";
 
 class AuthController {
   private readonly authService: AuthService;
   private readonly ACCESS_TOKEN_EXPIRY: number = 24 * 60 * 60 * 1000; // 86,400,000 ms (24 hours)
   private readonly REFRESH_TOKEN_EXPIRY: number = 7 * 24 * 60 * 60 * 1000; // 604,800,000 ms (7 days)
-  // private readonly DOMAIN: string =
-  //   process.env.NODE_ENV === "production"
-  //     ? "lingoframe-landing-page.vercel.app"
-  //     : "localhost";
 
   constructor() {
     this.authService = new AuthService();
@@ -22,11 +17,6 @@ class AuthController {
   public registerUser = asyncHandler(async (req: Request, res: Response) => {
     const validatedBody = createUserDto.safeParse(req.body);
 
-    const terms_accepted_ip =
-      req.headers["x-forwarded-for"]?.toString() ||
-      req.socket.remoteAddress ||
-      "unknown";
-
     if (!validatedBody.success) {
       const errorMessages = flattenZodErrors(validatedBody.error);
       throw new CustomError("Validation failed", 400, errorMessages);
@@ -34,7 +24,6 @@ class AuthController {
 
     const userData = {
       ...validatedBody.data,
-      terms_accepted_ip,
     };
 
     const data = await this.authService.registerUserService(userData);
@@ -155,28 +144,6 @@ class AuthController {
       message: "New Access Token Generated",
     });
   });
-
-  public requestEmailVerification = asyncHandler(
-    async (req: AuthenticatedRequest, res: Response) => {
-      const { user_id } = req.user;
-      await this.authService.requestEmailVerification(user_id);
-      res.status(200).json({
-        status_code: 200,
-        message: "Email Verification Link Sent To Your Email",
-      });
-    }
-  );
-
-  public verifyUserEmailController = asyncHandler(
-    async (req: Request, res: Response) => {
-      const { token } = req.query;
-      const message = await this.authService.verifyUserEmail(token);
-      res.status(200).json({
-        status_code: 200,
-        message,
-      });
-    }
-  );
 }
 
 export default AuthController;
