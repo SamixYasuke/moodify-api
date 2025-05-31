@@ -2,6 +2,8 @@ import { User } from "../models";
 import { CreateUserTaskDto, UpdateUserMoodDto } from "../dtos/user.dto";
 import { CustomError } from "../errors/CustomError";
 import Task from "../models/task.model";
+import { parseClientDateTime } from "../utils/helper";
+import { format } from "date-fns";
 
 class UserService {
   public getUserById = async (user_id: string) => {
@@ -38,16 +40,75 @@ class UserService {
       throw new CustomError("User not found", 404);
     }
 
+    const due = parseClientDateTime(date, time);
+
     const task = new Task({
       user_id: user._id,
       name,
-      time,
-      date,
+      due,
       priority,
       mood,
       image,
     });
     await task.save();
+    return {
+      task_id: task._id,
+      name: task.name,
+      time: format(task.due, "h:mm a"), // "7:00 AM"
+      date: format(task.due, "yyyy-MM-dd"), // "2025-04-17"
+      priority: task.priority,
+      mood: task.mood,
+      image: task.image,
+    };
+  };
+
+  public getTasksByUserId = async (userId: string, mood: string) => {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new CustomError("User not found", 404);
+    }
+
+    const query: { user_id: string; mood?: string } = {
+      user_id: userId,
+    };
+
+    if (mood) {
+      query.mood = mood;
+    }
+
+    const tasks = await Task.find(query).select("_id name due image mood");
+
+    const cleanedTasks = tasks.map((task, id) => {
+      return {
+        task_id: task._id,
+        name: task.name,
+        image: task.image,
+        mood: task.mood,
+        time: format(task.due, "h:mm a"),
+      };
+    });
+
+    return cleanedTasks;
+  };
+
+  public deleteTaskById = async (user_id: string, taskId: string) => {
+    const user = await User.findById(user_id);
+    if (!user) {
+      throw new CustomError("User not found", 404);
+    }
+
+    const task = await Task.findOneAndDelete({
+      _id: taskId,
+      user_id: user._id,
+    });
+
+    if (!task) {
+      throw new CustomError(
+        "Task not found or does not belong to this user!",
+        404
+      );
+    }
+
     return task;
   };
 }

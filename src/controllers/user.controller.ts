@@ -68,6 +68,32 @@ class UserController {
       });
     }
   );
+
+  public getTasks = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response) => {
+      const { user_id } = req.user;
+      const mood = req.query.mood;
+      const tasks = await this.userService.getTasksByUserId(user_id, mood);
+      res.status(200).json({
+        status_code: 200,
+        message: "Tasks fetched successfully",
+        data: tasks,
+      });
+    }
+  );
+
+  public deleteTask = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response) => {
+      const { user_id } = req.user;
+      const { taskId } = req.params;
+      const data = await this.userService.deleteTaskById(user_id, taskId);
+      res.status(200).json({
+        status_code: 200,
+        message: "Task deleted successfully",
+        data,
+      });
+    }
+  );
 }
 
 export default UserController;

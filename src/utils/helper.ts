@@ -3,6 +3,7 @@ import { CustomError } from "../errors/CustomError";
 import { randomBytes } from "crypto";
 import { ZodError } from "zod";
 import dotenv from "dotenv";
+import { parse } from "date-fns";
 
 dotenv.config();
 
@@ -90,10 +91,17 @@ const flattenZodErrors = (error: ZodError): string[] => {
   return recurse(error.format()).filter(Boolean);
 };
 
+const parseClientDateTime = (dateStr: string, timeStr: string): Date => {
+  const dateTimeString = `${dateStr} ${timeStr}`;
+  // Parse "17 April 2025 7:00 AM" into a Date object
+  return parse(dateTimeString, "d MMMM yyyy h:mm a", new Date());
+};
+
 export {
   generateOtp,
   generateJwt,
   verifyJwt,
   calculateOtpExpiry,
   flattenZodErrors,
+  parseClientDateTime,
 };

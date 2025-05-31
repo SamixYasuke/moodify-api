@@ -3,8 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 interface ITask extends Document {
   user_id: string;
   name: string;
-  time: string;
-  date: string;
+  due: Date;
   priority: "high" | "medium" | "low";
   mood: "energized" | "neutral" | "tired";
   image:
@@ -26,12 +25,8 @@ const taskSchema: Schema<ITask> = new mongoose.Schema(
       type: String,
       required: true,
     },
-    time: {
-      type: String,
-      required: true,
-    },
-    date: {
-      type: String,
+    due: {
+      type: Date,
       required: true,
     },
     priority: {

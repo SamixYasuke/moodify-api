@@ -29,13 +29,23 @@ export const updateUserMoodDto = z.object({
 
 export const createUserTaskDto = z.object({
   name: z.string({ required_error: "Task name is required" }),
-  time: z.string({ required_error: "Task time is required" }),
-  date: z.string({ required_error: "Task date is required" }),
-  priority: z.enum(["High", "Medium", "Low"], {
+  time: z
+    .string()
+    .regex(
+      /^([1-9]|1[0-2]):[0-5]\d (AM|PM)$/,
+      'Time must be in "h:mm AM/PM" format (e.g., "7:00 AM")'
+    ),
+  date: z
+    .string()
+    .regex(
+      /^\d{1,2} [A-Za-z]+ \d{4}$/,
+      'Date must be in "DD MMMM YYYY" format (e.g., "17 April 2025")'
+    ),
+  priority: z.enum(["high", "medium", "low"], {
     required_error: "Task priority is required",
     invalid_type_error: "Task priority must be one of High, Medium, Low",
   }),
-  mood: z.enum(["Energized", "Neutral", "Tired"], {
+  mood: z.enum(["energized", "neutral", "tired"], {
     required_error: "Task mood is required",
     invalid_type_error: "Task mood must be one of Energized, Neutral, Tired",
   }),
