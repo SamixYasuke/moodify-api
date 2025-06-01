@@ -91,8 +91,63 @@ class UserService {
     return cleanedTasks;
   };
 
-  public deleteTaskById = async (user_id: string, taskId: string) => {
+  public getTaskById = async (userId: string, taskId: string) => {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new CustomError("User not found", 404);
+    }
+    const task = await Task.findOne({
+      _id: taskId,
+      user_id: user._id,
+    }).select("_id name due image mood priority");
+    if (!task) {
+      throw new CustomError(
+        "Task not found or does not belong to this user!",
+        404
+      );
+    }
+    return task;
+  };
+
+  public updateTaskById = async (
+    user_id: string,
+    taskId: string,
+    taskData: CreateUserTaskDto
+  ) => {
     const user = await User.findById(user_id);
+    if (!user) {
+      throw new CustomError("User not found", 404);
+    }
+
+    const { date, image, mood, name, priority, time } = taskData;
+    const due = parseClientDateTime(date, time);
+
+    const task = await Task.findOneAndUpdate(
+      { _id: taskId, user_id: user._id },
+      { name, due, priority, mood, image },
+      { new: true }
+    ).select("_id name due image mood priority");
+
+    if (!task) {
+      throw new CustomError(
+        "Task not found or does not belong to this user!",
+        404
+      );
+    }
+
+    return {
+      task_id: task._id,
+      name: task.name,
+      time: format(task.due, "h:mm a"),
+      date: format(task.due, "yyyy-MM-dd"),
+      priority: task.priority,
+      mood: task.mood,
+      image: task.image,
+    };
+  };
+
+  public deleteTaskById = async (userId: string, taskId: string) => {
+    const user = await User.findById(userId);
     if (!user) {
       throw new CustomError("User not found", 404);
     }
@@ -110,6 +165,36 @@ class UserService {
     }
 
     return task;
+  };
+
+  public updateUsername = async (userId: string, newUsername: string) => {
+    const user = await User.findById(userId).select("username");
+    if (!user) {
+      throw new CustomError("User not found", 404);
+    }
+    if (user.username === newUsername) {
+      throw new CustomError("New username must be different", 400);
+    }
+    const existingUser = await User.findOne({ username: newUsername });
+    if (existingUser) {
+      throw new CustomError("Username already taken!!!!!!", 400);
+    }
+    user.username = newUsername;
+    await user.save();
+    return user;
+  };
+
+  public updateUserTheme = async (userId: string, theme: string) => {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new CustomError("User not found", 404);
+    }
+    if (user.theme === theme) {
+      throw new CustomError(`Theme is already set to ${theme}`, 400);
+    }
+    user.theme = theme;
+    await user.save();
+    return null;
   };
 }
 

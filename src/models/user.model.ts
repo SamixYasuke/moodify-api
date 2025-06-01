@@ -6,6 +6,7 @@ interface IUser extends Document {
   email: string;
   password: string;
   mood: "energized" | "relaxed" | "neutral";
+  theme: "light" | "dark" | string;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -31,6 +32,11 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       enum: ["energized", "relaxed", "neutral"],
       default: "neutral",
       required: true,
+    },
+    theme: {
+      type: String,
+      enum: ["light", "dark"],
+      default: "light",
     },
   },
   {
